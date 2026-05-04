@@ -1,0 +1,25 @@
+services:
+  postgis:
+    image: postgis/postgis:16-3.4
+    container_name: postgis
+    environment:
+      POSTGRES_DB: gis
+      POSTGRES_USER: gisuser
+      POSTGRES_PASSWORD: gispass
+    volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5433:5432"
+
+  geoserver:
+    image: kartoza/geoserver:2.24.2
+    container_name: geoserver
+    environment:
+      GEOSERVER_ADMIN_USER: admin
+      GEOSERVER_ADMIN_PASSWORD: geoserver
+    volumes:
+      - ./geoserver_data:/opt/geoserver/data_dir
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgis

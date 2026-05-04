@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package locks
+**/package-lock.json
+
+# GeoServer runtime files
+geoserver_data/logs/
+geoserver_data/legendsamples/
+geoserver_data/**/*.log
+geoserver_data/gwc/*.bak
+geoserver_data/gwc/diskquota_page_store_hsql/
+geoserver_data/tomcat_pass.txt
+geoserver_data/temp/
+geoserver_data/tmp/
+geoserver_data/monitoring/
+
+# PostgreSQL data
+postgres_data/
+
+# SQL backups
+*.sql.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+.eggs/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.tmp
+*.temp
+
+# Environment variables
+.env
+.env.local
+.env.*.local
