@@ -1,0 +1,54 @@
+{
+  "version": 8,
+  "sources": {
+    "osm": {
+      "type": "raster",
+      "tiles": ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+      "tileSize": 256    
+    },
+    "overture": {
+      "type": "geojson",
+      "data": "/overture.json"
+    }
+  },
+  "layers": [
+    {
+      "id": "background",
+      "type": "raster",
+      "source": "osm"
+    },
+    {
+      "id": "buildings-my",
+      "type": "fill",
+      "source": "overture",
+      "filter": ["==", ["get", "source_type"], "my"],
+      "paint": {
+        "fill-color": "green",
+        "fill-opacity": 0.7,
+        "fill-outline-color": "#000000"
+      }
+    },
+    {
+      "id": "buildings-osm",
+      "type": "fill",
+      "source": "overture",
+      "filter": ["==", ["get", "source_type"], "osm"],
+      "paint": {
+        "fill-color": "blue",
+        "fill-opacity": 0.7,
+        "fill-outline-color": "#000000"
+      }
+    },
+    {
+      "id": "buildings-ml",
+      "type": "fill",
+      "source": "overture",
+      "filter": ["==", ["get", "source_type"], "ml"],
+      "paint": {
+        "fill-color": "orange",
+        "fill-opacity": 0.7,
+        "fill-outline-color": "#000000"
+      }
+    }
+  ]
+}

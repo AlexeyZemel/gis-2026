@@ -1,66 +1,47 @@
 import { useEffect, useRef } from 'react';
+import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import ImageLayer from 'ol/layer/Image';
-import OSM from 'ol/source/OSM';
-import ImageWMS from 'ol/source/ImageWMS';
 import { fromLonLat } from 'ol/proj';
-import 'ol/ol.css';
-
+import apply from 'ol-mapbox-style';
 
 export default function App() {
   const mapRef = useRef(null);
 
   useEffect(() => {
-    const osmLayer = new TileLayer({
-      source: new OSM(),
-    });
-
-    const buildingsLayer = new ImageLayer({
-      source: new ImageWMS({
-        url: 'http://localhost:8080/geoserver/gis/wms',
-        params: {
-          LAYERS: 'gis:buildings',
-          TILED: true,
-        },
-        ratio: 1,
-        serverType: 'geoserver',
-      }),
-    });
-
-    const roadsLayer = new ImageLayer({
-      source: new ImageWMS({
-        url: 'http://localhost:8080/geoserver/gis/wms',
-        params: {
-          LAYERS: 'gis:roads',
-          TILED: true,
-        },
-        ratio: 1,
-        serverType: 'geoserver',
-      }),
-    });
-
-    const map = new Map({
-      target: mapRef.current,
-      layers: [
-        osmLayer,
-        buildingsLayer,
-        roadsLayer,
-      ],
-      view: new View({
-        center: fromLonLat([48.373, 53.208]), 
-        zoom: 15,
-      }),
-    });
-
-    return () => map.setTarget(null);
+    fetch('/style.json')
+      .then(response => response.json())
+      .then(style => {
+        const map = new Map({
+          target: mapRef.current,
+          view: new View({
+            center: fromLonLat([48.373, 53.208]),
+            zoom: 15,
+          }),
+        });
+        apply(map, style);
+      })
+      .catch(err => console.error('Ошибка загрузки стиля:', err));
   }, []);
 
   return (
-    <div
-      ref={mapRef}
-      style={{ width: '100vw', height: '100vh' }}
-    />
+    <>
+      <div ref={mapRef} className="map-container" />
+      <div className="legend">
+        <h4>Источник данных</h4>
+        <div>
+          <span className="legend-color my"></span>
+          my
+        </div>
+        <div>
+          <span className="legend-color osm"></span>
+          osm
+        </div>
+        <div>
+          <span className="legend-color ml"></span>
+          ml
+        </div>
+      </div>
+    </>
   );
 }
