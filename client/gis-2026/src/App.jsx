@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
-import 'ol/ol.css';
+import 'ol/ol.css'
 import Map from 'ol/Map';
 import View from 'ol/View';
 import { fromLonLat } from 'ol/proj';
+import ImageLayer from 'ol/layer/Image';
+import ImageWMS from 'ol/source/ImageWMS';
 import apply from 'ol-mapbox-style';
+
 
 export default function App() {
   const mapRef = useRef(null);
@@ -11,7 +14,7 @@ export default function App() {
   useEffect(() => {
     fetch('/style.json')
       .then(response => response.json())
-      .then(style => {
+      .then(async style => {
         const map = new Map({
           target: mapRef.current,
           view: new View({
@@ -19,7 +22,36 @@ export default function App() {
             zoom: 15,
           }),
         });
-        apply(map, style);
+
+        await apply(map, style);
+
+        const buildingsLayer = new ImageLayer({
+          source: new ImageWMS({
+            url: 'http://localhost:8080/geoserver/gis/wms',
+            params: {
+              LAYERS: 'gis:buildings',
+              TILED: true,
+            },
+            ratio: 1,
+            serverType: 'geoserver',
+          }),
+          opacity: 0.5,
+        });
+
+        const roadsLayer = new ImageLayer({
+          source: new ImageWMS({
+            url: 'http://localhost:8080/geoserver/gis/wms',
+            params: {
+              LAYERS: 'gis:roads',
+              TILED: true,
+            },
+            ratio: 1,
+            serverType: 'geoserver',
+          }),
+        });
+
+        map.addLayer(buildingsLayer);
+        map.addLayer(roadsLayer);
       })
       .catch(err => console.error('Ошибка загрузки стиля:', err));
   }, []);
